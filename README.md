@@ -13,13 +13,13 @@ Add the following dependency to your project `pom.xml`:
 
 ```xml
 <dependencies>
-	...
-	<dependency>
-        <groupId>com.orange.common</groupId>
-        <artifactId>orange-mathoms-logging</artifactId>
-        <version>0.0.1</version>
-	</dependency>
-	...
+  ...
+  <dependency>
+    <groupId>com.orange.common</groupId>
+    <artifactId>orange-mathoms-logging</artifactId>
+    <version>0.0.1</version>
+  </dependency>
+  ...
 </dependencies>
 ```
 
