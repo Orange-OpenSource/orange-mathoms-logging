@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<!-- using the CustomThrowableConverterWithHash with mostly any logback appender -->
+	<!-- 1: define "%sEx" as a conversion rule involving -->
+	<conversionRule conversionWord="sEx" converterClass="com.orange.common.logging.logback.CustomThrowableConverterWithHash" />
+	
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+ 		<layout class="ch.qos.logback.classic.PatternLayout">
+ 			<!-- 2: use the "%sEx" rule in the layout pattern -->
+			<Pattern>%d{HH:mm:ss.SSS} %-5level %logger [%thread:%X{requestId:--}] - %msg%n%sEx</Pattern>
+		</layout>
+		<!-- rest of your config ... -->
+	</appender>
+	
+	<!-- using the CustomThrowableConverterWithHash with any appender from logstash-logback-appender (even simpler!) -->
+	<appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashSocketAppender">
+		<throwableConverter class="com.orange.common.logging.logback.CustomThrowableConverterWithHash" />
+		<!-- rest of your config ... -->
+	</appender>
+	
+	<!-- rest of your config ... -->
+	<logger name="com.orange" level="DEBUG" />
+
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>
