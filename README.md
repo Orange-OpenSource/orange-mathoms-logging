@@ -7,6 +7,21 @@ They are mostly relying on [JEE](https://en.wikipedia.org/wiki/Java_Platform,_En
 [SLF4J](https://www.slf4j.org/), [Logback](https://logback.qos.ch/) and 
 [logstash-logback-encoder](https://github.com/logstash/logstash-logback-encoder).
 
+
+
+## Table of content
+
+* [Including it in your project](#including)
+* [Enrich logs with unique request IDs](#requestIds)
+* [Enrich logs with user IDs](#userIds)
+* [Enrich logs with session IDs](#sessionIds)
+* [Enrich stack traces with unique signatures](#stackTraceSign)
+* [Demo](#demo)
+
+
+
+<a name="including"/>
+
 ## Include it in your project
 
 Maven style (`pom.xml`):
@@ -22,6 +37,10 @@ Maven style (`pom.xml`):
   ...
 </dependencies>
 ```
+
+
+
+<a name="requestIds"/>
 
 ## Enrich logs with unique request IDs
 
@@ -41,7 +60,7 @@ servlet filter, that generates and enriches logs with a unique request ID.
 > :warning: The [RequestIdFilter](src/main/java/com/orange/common/logging/web/RequestIdFilter.java)
 > has to be installed *as early as possible* in the filters chain, to enrich all subsequent logs with the request ID.
 
-### How (the Spring Boot way)
+### How to (the Spring Boot way)
 
 Using Spring Boot, a servlet filter can be easily installed as a `@Bean` of type `javax.servlet.Filter` in your Spring Boot application.
 
@@ -57,7 +76,7 @@ public Filter requestIdFilter() {
 }
 ```
 
-### How (the web.xml way)
+### How to (the web.xml way)
 
 If you're not relying on Spring Boot, you can anyway use the [RequestIdFilter](src/main/java/com/orange/common/logging/web/RequestIdFilter.java)
 filter by declaring it in your `web.xml` descriptor.
@@ -86,6 +105,9 @@ filter by declaring it in your `web.xml` descriptor.
 ```
 
 
+
+<a name="userIds"/>
+
 ## Enrich logs with user IDs
 
 ### Why
@@ -100,7 +122,7 @@ servlet filter, that retrieves the authentication from the standard JEE `java.se
 > any hashing algorithm of your choice, in case the
 > principal name is a personal/sensitive info that shall not appear plaintext.
 
-### How (the Spring Boot way)
+### How to (the Spring Boot way)
 
 Using Spring Boot, a servlet filter can be easily installed as a `@Bean` of type `javax.servlet.Filter` in your Spring Boot application.
 
@@ -118,7 +140,7 @@ public Filter principalFilter(@Value("${logging.principal.hash_algo}") String ha
 }
 ```
 
-### How (the web.xml way)
+### How to (the web.xml way)
 
 If you're not relying on Spring Boot, you can anyway use the [PrincipalFilter](src/main/java/com/orange/common/logging/web/PrincipalFilter.java)
 filter by declaring it in your `web.xml` descriptor.
@@ -151,6 +173,10 @@ Example:
 </web-app>
 ```
 
+
+
+<a name="sessionIds"/>
+
 ## Enrich logs with session IDs
 
 ### Why
@@ -162,7 +188,7 @@ It may help - for instance - understand the user journey within his session.
 This can be done thanks to the [SessionIdFilter](src/main/java/com/orange/common/logging/web/SessionIdFilter.java)
 servlet filter .
 
-### How (the Spring Boot way)
+### How to (the Spring Boot way)
 
 Using Spring Boot, a servlet filter can be easily installed as a `@Bean` of type `javax.servlet.Filter` in your Spring Boot application.
 
@@ -178,7 +204,7 @@ public Filter sessionIdFilter() {
 }
 ```
 
-### How (the web.xml way)
+### How to (the web.xml way)
 
 If you're not relying on Spring Boot, you can anyway use the [SessionIdFilter](src/main/java/com/orange/common/logging/web/SessionIdFilter.java)
 filter by declaring it in your `web.xml` descriptor.
@@ -202,6 +228,10 @@ Example:
   </filter-mapping>
 </web-app>
 ```
+
+
+
+<a name="stackTraceSign"/>
 
 ## Enrich stack traces with unique signatures
 
@@ -244,6 +274,10 @@ Both are installed and configured in Logback configuration files:
   </root>
 </configuration>
 ```
+
+
+
+<a name="demo"/>
 
 ## Demo
 
