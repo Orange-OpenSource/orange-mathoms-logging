@@ -31,6 +31,20 @@ This code is under [Apache-2.0 License](LICENSE.txt)
 Maven style (`pom.xml`):
 
 ```xml
+<repositories>
+  <!-- add the Orange bintray repository -->
+  <repository>
+    <id>bintray-orange</id>
+    <url>http://dl.bintray.com/orange-opensource/maven</url>
+    <releases>
+      <enabled>true</enabled>
+    </releases>
+    <snapshots>
+      <enabled>false</enabled>
+    </snapshots>
+  </repository>
+</repositories>
+
 <dependencies>
   ...
   <dependency>
