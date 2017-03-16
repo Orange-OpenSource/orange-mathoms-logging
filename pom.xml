@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.orange.common</groupId>
     <artifactId>orange-mathoms-logging</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>Orange Software Experts Utils 4 Java</name>
 
     <properties>
