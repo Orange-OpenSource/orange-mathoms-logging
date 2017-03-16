@@ -69,7 +69,18 @@ component (see JavaDoc for more details).
 > :warning: The [RequestIdFilter](src/main/java/com/orange/common/logging/web/RequestIdFilter.java)
 > has to be installed *as early as possible* in the filters chain, to enrich all subsequent logs with the request ID.
 
-### How to (the Spring Boot way)
+### Configuration
+
+The *incoming request header name*, *MDC key* and *request attribute name* have default values, but can be configured either
+programmatically, with filter init parameters, or Java properties:
+ 
+parameter | Java property | filter init param | default value
+--------- | ------------- | ----------------- | -------------
+request header name    | `slf4j.tools.request_filter.header` | `header` | `X-Track-RequestId`
+MDC key                | `slf4j.tools.request_filter.mdc`            | `mdc`            | `requestId`
+request attribute name | `slf4j.tools.request_filter.attribute`      | `attribute`      | `track.requestId`
+
+### Example (the Spring Boot way)
 
 Using Spring Boot, a servlet filter can be easily installed as a `@Bean` of type `javax.servlet.Filter` in your Spring Boot application.
 
@@ -81,11 +92,14 @@ Example:
  */
 @Bean
 public Filter requestIdFilter() {
-  return new RequestIdFilter();
+  RequestIdFilter filter = new RequestIdFilter();
+  // override the default incoming request header name
+  filter.setHeaderName("UNIQUE_ID");
+  return filter;
 }
 ```
 
-### How to (the web.xml way)
+### Example (the web.xml way)
 
 If you're not relying on Spring Boot, you can anyway use the [RequestIdFilter](src/main/java/com/orange/common/logging/web/RequestIdFilter.java)
 filter by declaring it in your `web.xml` descriptor.
@@ -113,17 +127,6 @@ filter by declaring it in your `web.xml` descriptor.
 </web-app>
 ```
 
-### Configuration
-
-The *incoming request header name*, *MDC key* and *request attribute name* have default values, but can be configured either
-programmatically, with filter init parameters, or Java properties:
- 
-parameter | Java property | filter init param | default value
---------- | ------------- | ----------------- | -------------
-request header name    | `slf4j.tools.request_filter.header` | `header` | `X-Track-RequestId`
-MDC key                | `slf4j.tools.request_filter.mdc`            | `mdc`            | `requestId`
-request attribute name | `slf4j.tools.request_filter.attribute`      | `attribute`      | `track.requestId`
-
 
 
 <a name="userIds"/>
@@ -142,7 +145,27 @@ a servlet filter, that adds the authenticated `java.security.Principal` name to 
 > :warning: The [PrincipalFilter](src/main/java/com/orange/common/logging/web/PrincipalFilter.java)
 > has to be installed *after* the authentication filter in the filters chain, so that the authentication context is set.
 
-### How to (the Spring Boot way)
+### Configuration
+
+If the principal name is a personal user information (such as login or email address), it is recommended not to add it 
+"as-is" to the logging context, but generate a hash of it.
+
+This filter allows configuring a hashing algorithm. Supported values are:
+- `none`: principal name is added unchanged (default),
+- `hashcode`: an heaxadecimal representation of the principal name hashcode,
+- any other: shall refer to a valid message digest algorithm.
+
+The *hashing algorithm*, *MDC key* and *request attribute name* have default values, but can be configured either
+programmatically, with filter init parameters, or Java properties:
+ 
+parameter | Java property | filter init param | default value
+--------- | ------------- | ----------------- | -------------
+hashing algorithm      | `slf4j.tools.principal_filter.hash_algorithm` | `hash_algorithm` | `none`
+MDC key                | `slf4j.tools.principal_filter.mdc`            | `mdc`            | `userId`
+request attribute name | `slf4j.tools.principal_filter.attribute`      | `attribute`      | `track.userId`
+
+
+### Example (the Spring Boot way)
 
 Using Spring Boot, a servlet filter can be easily installed as a `@Bean` of type `javax.servlet.Filter` in your Spring Boot application.
 
@@ -155,12 +178,13 @@ Example:
 @Bean
 public Filter principalFilter(@Value("${logging.principal.hash_algo}") String hashAlgorithm) throws NoSuchAlgorithmException {
   PrincipalFilter filter = new PrincipalFilter();
+  // set hashing algorithm through Spring Boot config
   filter.setHashAlgorithm(hashAlgorithm);
   return filter;
 }
 ```
 
-### How to (the web.xml way)
+### Example (the web.xml way)
 
 If you're not relying on Spring Boot, you can anyway use the [PrincipalFilter](src/main/java/com/orange/common/logging/web/PrincipalFilter.java)
 filter by declaring it in your `web.xml` descriptor.
@@ -190,26 +214,6 @@ Example:
 </web-app>
 ```
 
-### Configuration
-
-If the principal name is a personal user information (such as login or email address), it is recommended not to add it 
-"as-is" to the logging context, but generate a hash of it.
-
-This filter allows configuring a hashing algorithm. Supported values are:
-- `none`: principal name is added unchanged (default),
-- `hashcode`: an heaxadecimal representation of the principal name hashcode,
-- any other: shall refer to a valid message digest algorithm.
-
-The *hashing algorithm*, *MDC key* and *request attribute name* have default values, but can be configured either
-programmatically, with filter init parameters, or Java properties:
- 
-parameter | Java property | filter init param | default value
---------- | ------------- | ----------------- | -------------
-hashing algorithm      | `slf4j.tools.principal_filter.hash_algorithm` | `hash_algorithm` | `none`
-MDC key                | `slf4j.tools.principal_filter.mdc`            | `mdc`            | `userId`
-request attribute name | `slf4j.tools.principal_filter.attribute`      | `attribute`      | `track.userId`
-
-
 
 <a name="sessionIds"/>
 
@@ -226,7 +230,17 @@ a servlet filter, that adds the current JEE session ID to the logging context
 (SLF4J's  [Mapped Diagnostic Context](https://logback.qos.ch/manual/mdc.html)).
 
 
-### How to (the Spring Boot way)
+### Configuration
+
+By default, the MDC key used to store the session ID is called `sessionId`, but it may be configured
+either programmatically, with filter init parameters, or Java properties:
+
+parameter | Java property | filter init param | default value
+--------- | ------------- | ----------------- | -------------
+MDC key   | `slf4j.tools.session_filter.mdc`  | `mdc`            | `sessionId`
+
+
+### Example (the Spring Boot way)
 
 Using Spring Boot, a servlet filter can be easily installed as a `@Bean` of type `javax.servlet.Filter` in your Spring Boot application.
 
@@ -242,7 +256,7 @@ public Filter sessionIdFilter() {
 }
 ```
 
-### How to (the web.xml way)
+### Example (the web.xml way)
 
 If you're not relying on Spring Boot, you can anyway use the [SessionIdFilter](src/main/java/com/orange/common/logging/web/SessionIdFilter.java)
 filter by declaring it in your `web.xml` descriptor.
@@ -266,16 +280,6 @@ Example:
   </filter-mapping>
 </web-app>
 ```
-
-### Configuration
-
-By default, the MDC key used to store the session ID is called `sessionId`, but it may be configured
-either programmatically, with filter init parameters, or Java properties:
-
-parameter | Java property | filter init param | default value
---------- | ------------- | ----------------- | -------------
-MDC key   | `slf4j.tools.session_filter.mdc`  | `mdc`            | `sessionId`
-
 
 
 <a name="stackTraceSign"/>
