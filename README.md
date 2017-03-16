@@ -10,7 +10,7 @@ They are mostly relying on [JEE](https://en.wikipedia.org/wiki/Java_Platform,_En
 
 ## License
 
-This code is under [Apache-2.0 License](LICENSE)
+This code is under [Apache-2.0 License](LICENSE.txt)
 
 
 ## Table of content
