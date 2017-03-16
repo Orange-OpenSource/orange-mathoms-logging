@@ -54,13 +54,18 @@ If you're relying on Spring Boot and building a microservices application, our o
 to enable distributed tracing and logs correlation.
 
 But if you are in a simpler context (monolothic app) or not using Spring Boot, you might be interested by the 
-[RequestIdFilter](src/main/java/com/orange/common/logging/web/RequestIdFilter.java)
-servlet filter, that generates and enriches logs with a unique request ID.
+[RequestIdFilter](src/main/java/com/orange/common/logging/web/RequestIdFilter.java),
+a servlet filter, that enriches the logging context (SLF4J's [Mapped Diagnostic Context](https://logback.qos.ch/manual/mdc.html)) 
+with a unique request ID.
+ 
+This unique request ID is either *retrieved* from the incoming request's headers (e.g. using an Apache Http server with 
+[mod_unique_id](https://httpd.apache.org/docs/current/en/mod/mod_unique_id.html) or any equivalent alternative),
+or *generated* if not present.
 
-> :information_source: This filter has several functionalities, such as the ability to *retrieve the unique request ID from the incoming request*
-> (in case you are using a front Apache Http server with [mod_unique_id](https://httpd.apache.org/docs/current/en/mod/mod_unique_id.html),
-> or any other front server that already generates such an ID), thus implementing end-2-end logs traceability.
->
+
+Notice that you can also *propagate* the request ID when calling other servers by using the [HttpRequestHandlerWithMdcPropagation](src/main/java/com/orange/common/logging/web/HttpRequestHandlerWithMdcPropagation.java)
+component (see JavaDoc for more details).
+
 > :warning: The [RequestIdFilter](src/main/java/com/orange/common/logging/web/RequestIdFilter.java)
 > has to be installed *as early as possible* in the filters chain, to enrich all subsequent logs with the request ID.
 
@@ -108,6 +113,17 @@ filter by declaring it in your `web.xml` descriptor.
 </web-app>
 ```
 
+### Configuration
+
+The *incoming request header name*, *MDC key* and *request attribute name* have default values, but can be configured either
+programmatically, with filter init parameters, or Java properties:
+ 
+parameter | Java property | filter init param | default value
+--------- | ------------- | ----------------- | -------------
+request header name    | `slf4j.tools.request_filter.header` | `header` | `X-Track-RequestId`
+MDC key                | `slf4j.tools.request_filter.mdc`            | `mdc`            | `requestId`
+request attribute name | `slf4j.tools.request_filter.attribute`      | `attribute`      | `track.requestId`
+
 
 
 <a name="userIds"/>
@@ -119,12 +135,12 @@ filter by declaring it in your `web.xml` descriptor.
 For applications managing users authentication, tagging logs with user IDs enables filtering in one click all logs related to a single user, or 
 checking very easily if a given error happens more often on some users of if it's evenly distributed.
 
-This can be done with the [PrincipalFilter](src/main/java/com/orange/common/logging/web/PrincipalFilter.java)
-servlet filter, that retrieves the authentication from the standard JEE `java.security.Principal`.
+This can be done with [PrincipalFilter](src/main/java/com/orange/common/logging/web/PrincipalFilter.java),
+a servlet filter, that adds the authenticated `java.security.Principal` name to the logging context 
+(SLF4J's  [Mapped Diagnostic Context](https://logback.qos.ch/manual/mdc.html)).
 
->  :information_source: This filter has several functionalities, such as the ability to *hash the principal name* with 
-> any hashing algorithm of your choice, in case the
-> principal name is a personal/sensitive info that shall not appear plaintext.
+> :warning: The [PrincipalFilter](src/main/java/com/orange/common/logging/web/PrincipalFilter.java)
+> has to be installed *after* the authentication filter in the filters chain, so that the authentication context is set.
 
 ### How to (the Spring Boot way)
 
@@ -148,9 +164,6 @@ public Filter principalFilter(@Value("${logging.principal.hash_algo}") String ha
 
 If you're not relying on Spring Boot, you can anyway use the [PrincipalFilter](src/main/java/com/orange/common/logging/web/PrincipalFilter.java)
 filter by declaring it in your `web.xml` descriptor.
-
-> :warning: The [PrincipalFilter](src/main/java/com/orange/common/logging/web/PrincipalFilter.java)
-> has to be installed *after* the authentication filter in the filters chain, so that the authentication context is set.
 
 Example:
 
@@ -177,6 +190,25 @@ Example:
 </web-app>
 ```
 
+### Configuration
+
+If the principal name is a personal user information (such as login or email address), it is recommended not to add it 
+"as-is" to the logging context, but generate a hash of it.
+
+This filter allows configuring a hashing algorithm. Supported values are:
+- `none`: principal name is added unchanged (default),
+- `hashcode`: an heaxadecimal representation of the principal name hashcode,
+- any other: shall refer to a valid message digest algorithm.
+
+The *hashing algorithm*, *MDC key* and *request attribute name* have default values, but can be configured either
+programmatically, with filter init parameters, or Java properties:
+ 
+parameter | Java property | filter init param | default value
+--------- | ------------- | ----------------- | -------------
+hashing algorithm      | `slf4j.tools.principal_filter.hash_algorithm` | `hash_algorithm` | `none`
+MDC key                | `slf4j.tools.principal_filter.mdc`            | `mdc`            | `userId`
+request attribute name | `slf4j.tools.principal_filter.attribute`      | `attribute`      | `track.userId`
+
 
 
 <a name="sessionIds"/>
@@ -189,8 +221,10 @@ For stateful applications (i.e. managing JEE sessions), tagging logs with sessio
 logs related to a single session.
 It may help - for instance - understand the user journey within his session.
 
-This can be done thanks to the [SessionIdFilter](src/main/java/com/orange/common/logging/web/SessionIdFilter.java)
-servlet filter .
+This can be done with [SessionIdFilter](src/main/java/com/orange/common/logging/web/SessionIdFilter.java)
+a servlet filter, that adds the current JEE session ID to the logging context 
+(SLF4J's  [Mapped Diagnostic Context](https://logback.qos.ch/manual/mdc.html)).
+
 
 ### How to (the Spring Boot way)
 
@@ -233,6 +267,15 @@ Example:
 </web-app>
 ```
 
+### Configuration
+
+By default, the MDC key used to store the session ID is called `sessionId`, but it may be configured
+either programmatically, with filter init parameters, or Java properties:
+
+parameter | Java property | filter init param | default value
+--------- | ------------- | ----------------- | -------------
+MDC key   | `slf4j.tools.session_filter.mdc`  | `mdc`            | `sessionId`
+
 
 
 <a name="stackTraceSign"/>
@@ -245,6 +288,33 @@ It is an easy way to track the error from the client (UI and/or API) to your log
 problem has been fixed for good...
 
 The idea is to generate a short, unique ID that identifies your stack trace.
+
+Example:
+
+```text
+#d39b71d7> my.project.core.api.stream.StreamStoreError: An error occured while loading stream 2ada5bc3cf29411fa183546b13058264/5fe770f915864668b235031b23dd9b4a
+   	at my.project.front.business.stream.IssStreamStore.getAsStream(IssStreamStore.java:305)
+   	at my.project.front.controller.api.pub.DataController.queryValues(DataController.java:232)
+   	at my.project.front.controller.api.pub.DataController$$FastClassBySpringCGLIB$$a779886d.invoke( )
+   	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204)
+   	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:708)
+   	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:157)
+   	at com.ryantenney.metrics.spring.MeteredMethodInterceptor.invoke(MeteredMethodInterceptor.java:45)
+   	... 53 common frames omitted
+Caused by: #4547608c> org.springframework.web.client.ResourceAccessException: I/O error on GET request for "https://api.iss-int.isaservicefor.me/api/v1/datasources/2ada5bc3cf29411fa183546b13058264/streams/5fe770f915864668b235031b23dd9b4a/values?pagesize=1&pagenumber=1&search=metadata.device%3Dnetatmo%3ANAMain%4070%3Aee%3A50%3A12%3Aef%3Afa":Read timed out; nested exception is java.net.SocketTimeoutException: Read timed out
+   	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:561)
+   	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:521)
+   	at my.project.iss.IssClient.getValuesAsStream(IssClient.java:262)
+   	at my.project.front.business.stream.IssStreamStore.getAsStream(IssStreamStore.java:285)
+   	... 91 common frames omitted
+Caused by: #7e585656> java.net.SocketTimeoutException: Read timed out
+   	at java.net.SocketInputStream.socketRead0(Native Method)
+   	at java.net.SocketInputStream.read(SocketInputStream.java:152)
+   	at sun.security.ssl.InputRecord.read(InputRecord.java:480)
+   	at com.sun.proxy.$Proxy120.receiveResponseHeader(Unknown Source)
+   	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:545)
+   	... 94 common frames omitted
+```
 
 ### How
 
