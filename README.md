@@ -8,6 +8,10 @@ They are mostly relying on [JEE](https://en.wikipedia.org/wiki/Java_Platform,_En
 [logstash-logback-encoder](https://github.com/logstash/logstash-logback-encoder).
 
 
+## License
+
+This code is under [Apache-2.0 License](LICENSE)
+
 
 ## Table of content
 
@@ -16,7 +20,7 @@ They are mostly relying on [JEE](https://en.wikipedia.org/wiki/Java_Platform,_En
 * [Enrich logs with user IDs](#userIds)
 * [Enrich logs with session IDs](#sessionIds)
 * [Enrich stack traces with unique signatures](#stackTraceSign)
-* [Demo](#demo)
+* [Demo application](#demo)
 
 
 
@@ -32,7 +36,7 @@ Maven style (`pom.xml`):
   <dependency>
     <groupId>com.orange.common</groupId>
     <artifactId>orange-mathoms-logging</artifactId>
-    <version>0.0.1</version>
+    <version>1.0.0</version>
   </dependency>
   ...
 </dependencies>
@@ -279,6 +283,6 @@ Both are installed and configured in Logback configuration files:
 
 <a name="demo"/>
 
-## Demo
+## Demo application
 
 Most of those tools are used in a live demo application based on Spring Boot _(coming soon on GitHub)_.
