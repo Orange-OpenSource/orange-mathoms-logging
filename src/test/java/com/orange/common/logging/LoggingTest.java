@@ -10,9 +10,19 @@ public class LoggingTest {
 		Logger logger = LoggerFactory.getLogger(LoggingTest.class);
 		logger.info("info logging");
 		try {
-			throw new RuntimeException("test error");
+			wrappedError();
 		} catch(Exception e) {
 			logger.error("error logging with stack", e);
 		}
+	}
+	private static void wrappedError() throws Exception {
+		try {
+			rootError();
+		} catch (Exception e) {
+			throw new Exception("wrapped error", e);
+		}
+	}
+	private static void rootError() throws Exception {
+		throw new Exception("root error");
 	}
 }
