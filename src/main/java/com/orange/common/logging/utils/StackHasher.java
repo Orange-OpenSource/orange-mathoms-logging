@@ -7,8 +7,6 @@
  */
 package com.orange.common.logging.utils;
 
-import com.google.common.base.Strings;
-
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -17,9 +15,9 @@ import java.util.Deque;
  *
  * @author pismy
  */
-public class ErrorSignature {
+public class StackHasher {
 
-    private ErrorSignature() {
+    private StackHasher() {
     }
 
     /**
@@ -38,7 +36,7 @@ public class ErrorSignature {
      */
     public static Deque<String> hexHashes(Throwable error) {
         Deque<String> hexHashes = new ArrayDeque<>();
-        ErrorSignature.hash(error, hexHashes);
+        StackHasher.hash(error, hexHashes);
         return hexHashes;
     }
 
@@ -67,8 +65,7 @@ public class ErrorSignature {
             hash = 31 * hash + hash(element);
         }
 
-        String hex = Strings.padStart(Integer.toHexString(hash), 8, '0');
-        hexHashes.push(hex);
+        hexHashes.push(String.format("%08x", hash));
 
         return hash;
     }

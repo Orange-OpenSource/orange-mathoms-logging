@@ -13,7 +13,7 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.ThrowableProxy;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.CoreConstants;
-import com.orange.common.logging.utils.ErrorSignature;
+import com.orange.common.logging.utils.StackHasher;
 
 import java.util.Deque;
 
@@ -111,7 +111,7 @@ import java.util.Deque;
  * </pre>
  *
  * @author pismy
- * @see ErrorSignature
+ * @see StackHasher
  */
 public class CustomThrowableConverterWithHash extends ThrowableProxyConverter {
 
@@ -122,7 +122,7 @@ public class CustomThrowableConverterWithHash extends ThrowableProxyConverter {
         // custom: compute stack trace hashes
         Deque<String> hashes = null;
         if (tp instanceof ThrowableProxy) {
-            hashes = ErrorSignature.hexHashes(((ThrowableProxy) tp).getThrowable());
+            hashes = StackHasher.hexHashes(((ThrowableProxy) tp).getThrowable());
         }
 
         recursiveAppend(sb, null, ThrowableProxyUtil.REGULAR_EXCEPTION_INDENT, tp, hashes);

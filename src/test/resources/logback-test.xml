@@ -1,29 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<!-- using the CustomThrowableConverterWithHash with mostly any logback appender -->
-	<!-- 1: define "%sEx" as a conversion rule involving -->
-	<conversionRule conversionWord="sEx" converterClass="com.orange.common.logging.logback.CustomThrowableConverterWithHash" />
-	
+	<!-- declare "%sEx" as a conversion rule using CustomThrowableConverterWithHash -->
+	<conversionRule conversionWord="hEx" converterClass="com.orange.common.logging.logback.CustomThrowableConverterWithHash" />
+
+	<!-- declare "%sH" as a conversion rule using StackHashConverter -->
+	<conversionRule conversionWord="sH" converterClass="com.orange.common.logging.logback.StackHashConverter" />
+
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
  		<layout class="ch.qos.logback.classic.PatternLayout">
- 			<!-- 2: use the "%sEx" rule in the layout pattern -->
-			<Pattern>%d{HH:mm:ss.SSS} %-5level %logger [%thread:%X{requestId:--}] - %msg%n%sEx</Pattern>
+ 			<!-- use converters in the layout pattern -->
+			<Pattern>%d{HH:mm:ss.SSS} %-5level %logger [stackHash:%sH{NONE}] [%thread:%X{requestId:--}] - %msg%n%hEx</Pattern>
 		</layout>
 		<!-- rest of your config ... -->
 	</appender>
 	
-	<!-- using the CustomThrowableConverterWithHash with any appender from logstash-logback-appender (even simpler!) -->
+	<!-- the LogstashEncoder from logstash-logback-appender encodes a log event to native Logstash JSON format -->
+	<appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="net.logstash.logback.encoder.LogstashEncoder" >
+			<!-- computes and adds a 'stack_hash' field on errors -->
+			<provider class="com.orange.common.logging.logback.StackHashJsonProvider"/>
+			<!-- enriches the stack trace with unique hash -->
+			<throwableConverter class="com.orange.common.logging.logback.CustomThrowableConverterWithHash" />
+		</encoder>
+	</appender>
+
+	<!-- even simpler with any appender from logstash-logback-appender -->
 	<appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashSocketAppender">
+		<!-- computes and adds a 'stack_hash' field on errors -->
+		<provider class="com.orange.common.logging.logback.StackHashJsonProvider"/>
+		<!-- enriches the stack trace with unique hash -->
 		<throwableConverter class="com.orange.common.logging.logback.CustomThrowableConverterWithHash" />
 		<!-- rest of your config ... -->
 	</appender>
-	
+
 	<!-- rest of your config ... -->
 	<logger name="com.orange" level="DEBUG" />
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="JSON" />
 	</root>
 
 </configuration>
