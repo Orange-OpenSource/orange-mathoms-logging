@@ -310,28 +310,23 @@ The idea is to generate a short, unique ID that identifies your stack trace.
 Example:
 
 ```text
-#d39b71d7> my.project.core.api.stream.StreamStoreError: An error occured while loading stream 2ada5bc3cf29411fa183546b13058264/5fe770f915864668b235031b23dd9b4a
-   	at my.project.front.business.stream.IssStreamStore.getAsStream(IssStreamStore.java:305)
-   	at my.project.front.controller.api.pub.DataController.queryValues(DataController.java:232)
-   	at my.project.front.controller.api.pub.DataController$$FastClassBySpringCGLIB$$a779886d.invoke( )
-   	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204)
-   	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:708)
-   	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:157)
-   	at com.ryantenney.metrics.spring.MeteredMethodInterceptor.invoke(MeteredMethodInterceptor.java:45)
-   	... 53 common frames omitted
-Caused by: #4547608c> org.springframework.web.client.ResourceAccessException: I/O error on GET request for "https://api.iss-int.isaservicefor.me/api/v1/datasources/2ada5bc3cf29411fa183546b13058264/streams/5fe770f915864668b235031b23dd9b4a/values?pagesize=1&pagenumber=1&search=metadata.device%3Dnetatmo%3ANAMain%4070%3Aee%3A50%3A12%3Aef%3Afa":Read timed out; nested exception is java.net.SocketTimeoutException: Read timed out
-   	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:561)
-   	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:521)
-   	at my.project.iss.IssClient.getValuesAsStream(IssClient.java:262)
-   	at my.project.front.business.stream.IssStreamStore.getAsStream(IssStreamStore.java:285)
-   	... 91 common frames omitted
-Caused by: #7e585656> java.net.SocketTimeoutException: Read timed out
-   	at java.net.SocketInputStream.socketRead0(Native Method)
-   	at java.net.SocketInputStream.read(SocketInputStream.java:152)
-   	at sun.security.ssl.InputRecord.read(InputRecord.java:480)
-   	at com.sun.proxy.$Proxy120.receiveResponseHeader(Unknown Source)
-   	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:545)
-   	... 94 common frames omitted
+#07e70d1e> com.xyz.MyApp$MyClient$MyClientException: An error occurred while getting the things
+    at com.xyz.MyApp$MyClient.getTheThings(MyApp.java:26)
+    at com.xyz.MyApp.test_logging(MyApp.java:16)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke(Method.java:498)
+    at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
+    at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+    ...
+Caused by: #393b506a> com.xyz.MyApp$HttpStack$HttpError: I/O error on GET request for http://dummy/things
+    at com.xyz.MyApp$HttpStack.get(MyApp.java:40)
+    at com.xyz.MyApp$MyClient.getTheThings(MyApp.java:24)
+    ... 23 common frames omitted
+Caused by: #d6db326f> java.net.SocketTimeoutException: Read timed out
+    at com.xyz.MyApp$HttpStack.get(MyApp.java:38)
+    ... 24 common frames omitted```
 ```
 
 ### How
