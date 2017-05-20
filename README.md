@@ -368,4 +368,4 @@ Both are installed and configured in Logback configuration files:
 
 ## Demo application
 
-Most of those tools are used in a live demo application based on Spring Boot _(coming soon on GitHub)_.
+Most of those tools are demo'ed in [Woofer](https://github.com/Orange-OpenSource/woofer), a showcase web app based on Spring Boot.
