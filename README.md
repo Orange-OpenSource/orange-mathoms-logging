@@ -1,4 +1,6 @@
 # Orange Mathoms: Logging
+[![Build Status](https://travis-ci.org/Orange-OpenSource/orange-mathoms-logging.svg?branch=master)](https://travis-ci.org/Orange-OpenSource/orange-mathoms-logging)
+[![Download](https://api.bintray.com/packages/orange-opensource/maven/orange-mathoms-logging/images/download.svg) ](https://bintray.com/orange-opensource/maven/orange-mathoms-logging/_latestVersion)
 
 This Java library - developed by the Orange Software Experts community - packages several [mathoms](http://tolkiengateway.net/wiki/Mathoms) 
 related to logging that are used here and there in our projects.
