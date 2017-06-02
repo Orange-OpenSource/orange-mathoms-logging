@@ -24,127 +24,96 @@ In some cases, the error hash may almost become a bug ID that you can link your 
 
 ## Example
 
-<style>
-.stable {
-    font-weight: bold;
-}
-.variable {
-    text-decoration: line-through;
-}
-.variable.message {
-    color: #FF4136;
-}
-.variable.aop {
-    color: #85144b;
-}
-.technical {
-    font-style: italic;
-}
-.technical.aop {
-    color: #FF851B;
-}
-.technical.fwk {
-    color: #3D9970;
-}
-.technical.jee {
-    color: #0074D9;
-}
-.changed {
-    font-weight: bold;
-    background-color: #7FDBFF;
-}
-</style>
-
 ### Let's consider error stack 1
 
 Note: the stack trace presented here has been cut by half from useless lines
 
 <pre>
-<span class=stable>com.xyz.MyApp$MyClient$MyClientException</span>: <span class="variable message">An error occurred while getting Alice's things</span>
-  at <span class=stable>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:26)</span>
-  at <span class=stable>com.xyz.MyApp$MyService.displayThings(MyApp.java:16)</span>
-  at <span class="variable aop">com.xyz.MyApp$MyService$$FastClassByCGLIB$$e7645040.invoke()</span>
-  at <span class="technical aop">net.sf.cglib.proxy.MethodProxy.invoke()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.Cglib2AopProxy$CglibMethodInvocation.invokeJoinpoint()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</span>
-  at <span class="technical fwk">org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed()</span>
-  at <span class="technical aop">sun.reflect.NativeMethodAccessorImpl.invoke0()</span>
-  at <span class="technical aop">sun.reflect.NativeMethodAccessorImpl.invoke()</span>
-  at <span class="technical aop">sun.reflect.DelegatingMethodAccessorImpl.invoke()</span>
-  at <span class="technical aop">java.lang.reflect.Method.invoke()</span>
-  at <span class="technical fwk">org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs()</span>
-  at <span class="technical fwk">org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod()</span>
-  at <span class="technical fwk">org.springframework.aop.aspectj.AspectJAroundAdvice.invoke()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</span>
-  at <span class="technical fwk">org.springframework.aop.interceptor.AbstractTraceInterceptor.invoke()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</span>
-  at <span class="technical fwk">org.springframework.transaction.interceptor.TransactionInterceptor.invoke()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</span>
-  at <span class="technical fwk">org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.Cglib2AopProxy$DynamicAdvisedInterceptor.intercept()</span>
-  at <span class="variable aop">com.xyz.MyApp$MyService$$EnhancerBySpringCGLIB$$c673c675.displayThings(&lt;generated&gt;)</span>
-  at <span class="variable aop">sun.reflect.GeneratedMethodAccessor647.invoke(Unknown Source)</span>
-  at <span class="technical aop">sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)</span>
-  at <span class="technical aop">java.lang.reflect.Method.invoke(Method.java:498)</span>
-  at <span class="technical fwk">org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)</span>
-  at <span class="technical fwk">org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:133)</span>
-  at <span class="technical fwk">org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:116)</span>
-  at <span class="technical fwk">org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:827)</span>
-  at <span class="technical fwk">org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:738)</span>
-  at <span class="technical fwk">org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:85)</span>
-  at <span class="technical fwk">org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)</span>
-  at <span class="technical fwk">org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:897)</span>
-  at <span class="technical fwk">org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:970)</span>
-  at <span class="technical fwk">org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:861)</span>
-  at <span class="technical jee">javax.servlet.http.HttpServlet.service(HttpServlet.java:624)</span>
-  at <span class="technical fwk">org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:846)</span>
-  at <span class="technical jee">javax.servlet.http.HttpServlet.service(HttpServlet.java:731)</span>
-  at <span class="technical jee">org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:303)</span>
-  at <span class="technical jee">org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:208)</span>
-  at <span class="technical jee">org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:52)</span>
-  at <span class="technical jee">org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:241)</span>
-  at <span class="technical jee">org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:208)</span>
+<b>com.xyz.MyApp$MyClient$MyClientException</b>: <strike>An error occurred while getting Alice's things</strike><sup>(msg)</sup>
+  at <b>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:26)</b>
+  at <b>com.xyz.MyApp$MyService.displayThings(MyApp.java:16)</b>
+  at <strike>com.xyz.MyApp$MyService$$FastClassByCGLIB$$e7645040.invoke()</strike><sup>(aop)</sup>
+  at <i>net.sf.cglib.proxy.MethodProxy.invoke()</i><sup>(aop)</sup>
+  at <i>org.springframework.aop.framework.Cglib2AopProxy$CglibMethodInvocation.invokeJoinpoint()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed()</i><sup>(fwk)</sup>
+  at <i>sun.reflect.NativeMethodAccessorImpl.invoke0()</i><sup>(aop)</sup>
+  at <i>sun.reflect.NativeMethodAccessorImpl.invoke()</i><sup>(aop)</sup>
+  at <i>sun.reflect.DelegatingMethodAccessorImpl.invoke()</i><sup>(aop)</sup>
+  at <i>java.lang.reflect.Method.invoke()</i><sup>(aop)</sup>
+  at <i>org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.aspectj.AspectJAroundAdvice.invoke()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.interceptor.AbstractTraceInterceptor.invoke()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</i><sup>(fwk)</sup>
+  at <i>org.springframework.transaction.interceptor.TransactionInterceptor.invoke()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.framework.Cglib2AopProxy$DynamicAdvisedInterceptor.intercept()</i><sup>(fwk)</sup>
+  at <strike>com.xyz.MyApp$MyService$$EnhancerBySpringCGLIB$$c673c675.displayThings(&lt;generated&gt;)</strike><sup>(aop)</sup>
+  at <strike>sun.reflect.GeneratedMethodAccessor647.invoke(Unknown Source)</strike><sup>(aop)</sup>
+  at <i>sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)</i><sup>(aop)</sup>
+  at <i>java.lang.reflect.Method.invoke(Method.java:498)</i><sup>(aop)</sup>
+  at <i>org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)</i><sup>(fwk)</sup>
+  at <i>org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:133)</i><sup>(fwk)</sup>
+  at <i>org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:116)</i><sup>(fwk)</sup>
+  at <i>org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:827)</i><sup>(fwk)</sup>
+  at <i>org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:738)</i><sup>(fwk)</sup>
+  at <i>org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:85)</i><sup>(fwk)</sup>
+  at <i>org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)</i><sup>(fwk)</sup>
+  at <i>org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:897)</i><sup>(fwk)</sup>
+  at <i>org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:970)</i><sup>(fwk)</sup>
+  at <i>org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:861)</i><sup>(fwk)</sup>
+  at <i>javax.servlet.http.HttpServlet.service(HttpServlet.java:624)</i><sup>(jee)</sup>
+  at <i>org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:846)</i><sup>(fwk)</sup>
+  at <i>javax.servlet.http.HttpServlet.service(HttpServlet.java:731)</i><sup>(jee)</sup>
+  at <i>org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:303)</i><sup>(jee)</sup>
+  at <i>org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:208)</i><sup>(jee)</sup>
+  at <i>org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:52)</i><sup>(jee)</sup>
+  at <i>org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:241)</i><sup>(jee)</sup>
+  at <i>org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:208)</i><sup>(jee)</sup>
   ...
-  at <span class="technical fwk">org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)</span>
-  at <span class="technical fwk">org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:214)</span>
-  at <span class="technical fwk">org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:177)</span>
-  at <span class="technical fwk">org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:346)</span>
-  at <span class="technical fwk">org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:262)</span>
-  at <span class="technical jee">org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:241)</span>
-  at <span class="technical jee">org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:208)</span>
+  at <i>org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)</i><sup>(fwk)</sup>
+  at <i>org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:214)</i><sup>(fwk)</sup>
+  at <i>org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:177)</i><sup>(fwk)</sup>
+  at <i>org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:346)</i><sup>(fwk)</sup>
+  at <i>org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:262)</i><sup>(fwk)</sup>
+  at <i>org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:241)</i><sup>(jee)</sup>
+  at <i>org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:208)</i><sup>(jee)</sup>
   ...
-  at <span class="technical jee">org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:116)</span>
-  at <span class="technical jee">org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:436)</span>
-  at <span class="technical jee">org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:1078)</span>
-  at <span class="technical jee">org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:625)</span>
-  at <span class="technical jee">org.apache.tomcat.util.net.JIoEndpoint$SocketProcessor.run(JIoEndpoint.java:316)</span>
-  at <span class="technical jee">java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)</span>
-  at <span class="technical jee">java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)</span>
-  at <span class="technical jee">org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)</span>
-  at <span class="technical jee">java.lang.Thread.run(Thread.java:748)</span>
+  at <i>org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:116)</i><sup>(jee)</sup>
+  at <i>org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:436)</i><sup>(jee)</sup>
+  at <i>org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:1078)</i><sup>(jee)</sup>
+  at <i>org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:625)</i><sup>(jee)</sup>
+  at <i>org.apache.tomcat.util.net.JIoEndpoint$SocketProcessor.run(JIoEndpoint.java:316)</i><sup>(jee)</sup>
+  at <i>java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)</i><sup>(jee)</sup>
+  at <i>java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)</i><sup>(jee)</sup>
+  at <i>org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)</i><sup>(jee)</sup>
+  at <i>java.lang.Thread.run(Thread.java:748)</i><sup>(jee)</sup>
   ...
-Caused by: <span class=stable>com.xyz.MyApp$HttpStack$HttpError</span>: <span class="variable message">I/O error on GET http://dummy/user/alice/things</span>
-  at <span class=stable>com.xyz.MyApp$HttpStack.get(MyApp.java:40)</span>
-  at <span class=stable>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:24)</span>
+Caused by: <b>com.xyz.MyApp$HttpStack$HttpError</b>: <strike>I/O error on GET http://dummy/user/alice/things</strike><sup>(msg)</sup>
+  at <b>com.xyz.MyApp$HttpStack.get(MyApp.java:40)</b>
+  at <b>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:24)</b>
   ... 23 common frames omitted
-Caused by: <span class=stable>java.net.SocketTimeoutException</span>: <span class="variable message">Read timed out</span>
-  at <span class=stable>com.xyz.MyApp$HttpStack.get(MyApp.java:38)</span>
+Caused by: <b>java.net.SocketTimeoutException</b>: <strike>Read timed out</strike><sup>(msg)</sup>
+  at <b>com.xyz.MyApp$HttpStack.get(MyApp.java:38)</b>
   ... 24 common frames omitted
 </pre>
 
 ---
 
-<span class=variable>Striked out elements</span> may vary from one occurrence to the other:
+<strike>Strike out elements</strike> may vary from one occurrence to the other:
 
-* <span class="variable message">error messages</span> often contain stuff related to the very error occurrence context,
-* <span class="variable aop">AOP and dynamic invocation / generated classes</span> may vary from one execution to another.
+* <strike>error messages</strike><sup>(msg)</sup> often contain stuff related to the very error occurrence context,
+* <strike>AOP generated classes</strike><sup>(aop)</sup> may vary from one execution to another.
 
 *Italic* elements are somewhat not stable, or at least useless (purely technical). Ex:
 
-* <span class="technical jee">JEE container stuff</span>: may change when you upgrade your JEE container version or add/remove/reorganize your servlet filters chain for instance,
-* <span class="technical fwk">Spring Framework</span> underlying stacks (MVC, security) for pretty much the same reason,
-* <span class="technical aop">AOP and dynamic invocation</span>: purely technical, and quite implementation-dependent.
+* <i>JEE container stuff</i><sup>(jee)</sup>: may change when you upgrade your JEE container version or add/remove/reorganize your servlet filters chain for instance,
+* <i>Spring Framework</i><sup>(fwk)</sup> underlying stacks (MVC, security) for pretty much the same reason,
+* <i>AOP and dynamic invocation</i><sup>(aop)</sup>: purely technical, and quite implementation-dependent.
 
 Only **bolded elements** are supposed to be stable.
 
@@ -155,44 +124,44 @@ Only **bolded elements** are supposed to be stable.
 (shortened)
 
 <pre>
-<span class=stable>com.xyz.MyApp$MyClient$MyClientException</span>: <span class="variable message">An error occurred while getting <span class=changed>Bob</span>'s things</span>
-  at <span class=stable>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:26)</span>
-  at <span class=stable>com.xyz.MyApp$MyService.displayThings(MyApp.java:16)</span>
-  at <span class="variable aop">com.xyz.MyApp$MyService$$FastClassByCGLIB$$<span class=changed>07e70d1e</span>.invoke()</span>
-  at <span class="technical aop">net.sf.cglib.proxy.MethodProxy.invoke()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.Cglib2AopProxy$CglibMethodInvocation.invokeJoinpoint()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</span>
-  at <span class="technical fwk">org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed()</span>
-  at <span class="technical aop">sun.reflect.NativeMethodAccessorImpl.invoke0()</span>
-  at <span class="technical aop">sun.reflect.NativeMethodAccessorImpl.invoke()</span>
-  at <span class="technical aop">sun.reflect.DelegatingMethodAccessorImpl.invoke()</span>
-  at <span class="technical aop">java.lang.reflect.Method.invoke()</span>
-  at <span class="technical fwk">org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs()</span>
-  at <span class="technical fwk">org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod()</span>
-  at <span class="technical fwk">org.springframework.aop.aspectj.AspectJAroundAdvice.invoke()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</span>
-  at <span class="technical fwk">org.springframework.aop.interceptor.AbstractTraceInterceptor.invoke()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</span>
-  at <span class="technical fwk">org.springframework.transaction.interceptor.TransactionInterceptor.invoke()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</span>
-  at <span class="technical fwk">org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.Cglib2AopProxy$DynamicAdvisedInterceptor.intercept()</span>
-  at <span class="variable aop">com.xyz.MyApp$MyService$$EnhancerBySpringCGLIB$$<span class=changed>e3f570b1</span>.displayThings(&lt;generated&gt;)</span>
-  at <span class="variable aop">sun.reflect.<span class=changed>GeneratedMethodAccessor737</span>.invoke(Unknown Source)</span>
+<b>com.xyz.MyApp$MyClient$MyClientException</b>: <strike>An error occurred while getting <span class=changed>Bob</span>'s things</strike><sup>(msg)</sup>
+  at <b>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:26)</b>
+  at <b>com.xyz.MyApp$MyService.displayThings(MyApp.java:16)</b>
+  at <strike>com.xyz.MyApp$MyService$$FastClassByCGLIB$$<span class=changed>07e70d1e</span>.invoke()</strike><sup>(aop)</sup>
+  at <i>net.sf.cglib.proxy.MethodProxy.invoke()</i><sup>(aop)</sup>
+  at <i>org.springframework.aop.framework.Cglib2AopProxy$CglibMethodInvocation.invokeJoinpoint()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed()</i><sup>(fwk)</sup>
+  at <i>sun.reflect.NativeMethodAccessorImpl.invoke0()</i><sup>(aop)</sup>
+  at <i>sun.reflect.NativeMethodAccessorImpl.invoke()</i><sup>(aop)</sup>
+  at <i>sun.reflect.DelegatingMethodAccessorImpl.invoke()</i><sup>(aop)</sup>
+  at <i>java.lang.reflect.Method.invoke()</i><sup>(aop)</sup>
+  at <i>org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.aspectj.AspectJAroundAdvice.invoke()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.interceptor.AbstractTraceInterceptor.invoke()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</i><sup>(fwk)</sup>
+  at <i>org.springframework.transaction.interceptor.TransactionInterceptor.invoke()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.framework.Cglib2AopProxy$DynamicAdvisedInterceptor.intercept()</i><sup>(fwk)</sup>
+  at <strike>com.xyz.MyApp$MyService$$EnhancerBySpringCGLIB$$<span class=changed>e3f570b1</span>.displayThings(&lt;generated&gt;)</strike><sup>(aop)</sup>
+  at <strike>sun.reflect.<span class=changed>GeneratedMethodAccessor737</span>.invoke(Unknown Source)</strike><sup>(aop)</sup>
   ...
-Caused by: <span class=stable>com.xyz.MyApp$HttpStack$HttpError</span>: <span class="variable message">I/O error on GET http://dummy/user/<span class=changed>bob</span>/things</span>
-  at <span class=stable>com.xyz.MyApp$HttpStack.get(MyApp.java:40)</span>
-  at <span class=stable>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:24)</span>
+Caused by: <b>com.xyz.MyApp$HttpStack$HttpError</b>: <strike>I/O error on GET http://dummy/user/<span class=changed>bob</span>/things</strike><sup>(msg)</sup>
+  at <b>com.xyz.MyApp$HttpStack.get(MyApp.java:40)</b>
+  at <b>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:24)</b>
   ... 23 common frames omitted
-Caused by: <span class=stable>java.net.SocketTimeoutException</span>: <span class="variable message">Read timed out</span>
-  at <span class=stable>com.xyz.MyApp$HttpStack.get(MyApp.java:38)</span>
+Caused by: <b>java.net.SocketTimeoutException</b>: <strike>Read timed out</strike><sup>(msg)</sup>
+  at <b>com.xyz.MyApp$HttpStack.get(MyApp.java:38)</b>
   ... 24 common frames omitted
 </pre>
 
 
 
-You may see in this example that most of the <span class=variable>striked</span> elements are different from error stack
+You may see in this example that most of the <strike>striked elements</strike> are different from error stack
 1 (messages and generated classes names).
 
 Nevertheless it is the same exact error (despite the context is different as it applies to another user), and the goal
@@ -203,25 +172,25 @@ here is to be able to count them as *two occurrences of the same error*.
 (shortened)
 
 <pre>
-<span class=stable>com.xyz.MyApp$MyClient$MyClientException</span>: <span class="variable message">An error occurred while getting Alice's things</span>
-  at <span class=stable>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:26)</span>
-  at <span class=stable>com.xyz.MyApp$MyService.displayThings(MyApp.java:16)</span>
-  at <span class="variable aop">com.xyz.MyApp$MyService$$FastClassByCGLIB$$e7645040.invoke()</span>
-  at <span class="technical aop">net.sf.cglib.proxy.MethodProxy.invoke()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.Cglib2AopProxy$CglibMethodInvocation.invokeJoinpoint()</span>
-  at <span class="technical fwk">org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</span>
-  at <span class="technical fwk">org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed()</span>
-  at <span class="technical aop">sun.reflect.NativeMethodAccessorImpl.invoke0()</span>
-  at <span class="technical aop">sun.reflect.NativeMethodAccessorImpl.invoke()</span>
-  at <span class="technical aop">sun.reflect.DelegatingMethodAccessorImpl.invoke()</span>
-  at <span class="technical aop">java.lang.reflect.Method.invoke()</span>
+<b>com.xyz.MyApp$MyClient$MyClientException</b>: <strike>An error occurred while getting Alice's things</strike><sup>(msg)</sup>
+  at <b>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:26)</b>
+  at <b>com.xyz.MyApp$MyService.displayThings(MyApp.java:16)</b>
+  at <strike>com.xyz.MyApp$MyService$$FastClassByCGLIB$$e7645040.invoke()</strike><sup>(aop)</sup>
+  at <i>net.sf.cglib.proxy.MethodProxy.invoke()</i><sup>(aop)</sup>
+  at <i>org.springframework.aop.framework.Cglib2AopProxy$CglibMethodInvocation.invokeJoinpoint()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</i><sup>(fwk)</sup>
+  at <i>org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed()</i><sup>(fwk)</sup>
+  at <i>sun.reflect.NativeMethodAccessorImpl.invoke0()</i><sup>(aop)</sup>
+  at <i>sun.reflect.NativeMethodAccessorImpl.invoke()</i><sup>(aop)</sup>
+  at <i>sun.reflect.DelegatingMethodAccessorImpl.invoke()</i><sup>(aop)</sup>
+  at <i>java.lang.reflect.Method.invoke()</i><sup>(aop)</sup>
   ...
-Caused by: <span class=stable>com.xyz.MyApp$HttpStack$HttpError</span>: <span class="variable message">I/O error on GET http://dummy/user/alice/things</span>
-  at <span class=stable>com.xyz.MyApp$HttpStack.get(MyApp.java:40)</span>
-  at <span class=stable>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:24)</span>
+Caused by: <b>com.xyz.MyApp$HttpStack$HttpError</b>: <strike>I/O error on GET http://dummy/user/alice/things</strike><sup>(msg)</sup>
+  at <b>com.xyz.MyApp$HttpStack.get(MyApp.java:40)</b>
+  at <b>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:24)</b>
   ... 23 common frames omitted
-Caused by: <span class=stable>javax.net.ssl.SSLException</span>: <span class="variable message">Connection has been shutdown: javax.net.ssl.SSLHandshakeException: Received fatal alert: certificate_unknown</span>
-  at <span class=stable>com.sun.net.ssl.internal.ssl.SSLSocketImpl.checkEOF(SSLSocketImpl.java:1172)</span>
+Caused by: <b>javax.net.ssl.SSLException</b>: <strike>Connection has been shutdown: javax.net.ssl.SSLHandshakeException: Received fatal alert: certificate_unknown</strike><sup>(msg)</sup>
+  at <b>com.sun.net.ssl.internal.ssl.SSLSocketImpl.checkEOF(SSLSocketImpl.java:1172)</b>
   ... 24 common frames omitted
 </pre>
 
