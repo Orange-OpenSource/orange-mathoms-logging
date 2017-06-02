@@ -124,10 +124,10 @@ Only **bolded elements** are supposed to be stable.
 (shortened)
 
 <pre>
-<b>com.xyz.MyApp$MyClient$MyClientException</b>: <strike>An error occurred while getting <mark>Bob</mark>'s things</strike><sup>(msg)</sup>
+<b>com.xyz.MyApp$MyClient$MyClientException</b>: <strike>An error occurred while getting <b>Bob</b>'s things</strike><sup>(msg)</sup>
   at <b>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:26)</b>
   at <b>com.xyz.MyApp$MyService.displayThings(MyApp.java:16)</b>
-  at <strike>com.xyz.MyApp$MyService$$FastClassByCGLIB$$<mark>07e70d1e</mark>.invoke()</strike><sup>(aop)</sup>
+  at <strike>com.xyz.MyApp$MyService$$FastClassByCGLIB$$<b>07e70d1e</b>.invoke()</strike><sup>(aop)</sup>
   at <i>net.sf.cglib.proxy.MethodProxy.invoke()</i><sup>(aop)</sup>
   at <i>org.springframework.aop.framework.Cglib2AopProxy$CglibMethodInvocation.invokeJoinpoint()</i><sup>(fwk)</sup>
   at <i>org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</i><sup>(fwk)</sup>
@@ -147,10 +147,10 @@ Only **bolded elements** are supposed to be stable.
   at <i>org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke()</i><sup>(fwk)</sup>
   at <i>org.springframework.aop.framework.ReflectiveMethodInvocation.proceed()</i><sup>(fwk)</sup>
   at <i>org.springframework.aop.framework.Cglib2AopProxy$DynamicAdvisedInterceptor.intercept()</i><sup>(fwk)</sup>
-  at <strike>com.xyz.MyApp$MyService$$EnhancerBySpringCGLIB$$<mark>e3f570b1</mark>.displayThings(&lt;generated&gt;)</strike><sup>(aop)</sup>
-  at <strike>sun.reflect.<mark>GeneratedMethodAccessor737</mark>.invoke(Unknown Source)</strike><sup>(aop)</sup>
+  at <strike>com.xyz.MyApp$MyService$$EnhancerBySpringCGLIB$$<b>e3f570b1</b>.displayThings(&lt;generated&gt;)</strike><sup>(aop)</sup>
+  at <strike>sun.reflect.<b>GeneratedMethodAccessor737</b>.invoke(Unknown Source)</strike><sup>(aop)</sup>
   ...
-Caused by: <b>com.xyz.MyApp$HttpStack$HttpError</b>: <strike>I/O error on GET http://dummy/user/<mark>bob</mark>/things</strike><sup>(msg)</sup>
+Caused by: <b>com.xyz.MyApp$HttpStack$HttpError</b>: <strike>I/O error on GET http://dummy/user/<b>bob</b>/things</strike><sup>(msg)</sup>
   at <b>com.xyz.MyApp$HttpStack.get(MyApp.java:40)</b>
   at <b>com.xyz.MyApp$MyClient.getTheThings(MyApp.java:24)</b>
   ... 23 common frames omitted
@@ -161,7 +161,7 @@ Caused by: <b>java.net.SocketTimeoutException</b>: <strike>Read timed out</strik
 
 
 
-You may see in this example that most of the <strike>striked elements</strike> are different from error stack
+You may see in this example that most of the <strike>strike elements have slight <b>differences</b></strike> from error stack
 1 (messages and generated classes names).
 
 Nevertheless it is the same exact error (despite the context is different as it applies to another user), and the goal
