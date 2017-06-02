@@ -9,11 +9,9 @@ They are mostly relying on [JEE](https://en.wikipedia.org/wiki/Java_Platform,_En
 [SLF4J](https://www.slf4j.org/), [Logback](https://logback.qos.ch/) and 
 [logstash-logback-encoder](https://github.com/logstash/logstash-logback-encoder).
 
-
 ## License
 
 This code is under [Apache-2.0 License](LICENSE.txt)
-
 
 ## Table of content
 
@@ -23,8 +21,6 @@ This code is under [Apache-2.0 License](LICENSE.txt)
 * [Enrich logs with session IDs](#sessionIds)
 * [Enrich stack traces with unique signatures](#stackTraceSign)
 * [Demo application](#demo)
-
-
 
 <a name="including"/>
 
@@ -364,6 +360,9 @@ Both are installed and configured in Logback configuration files:
 </configuration>
 ```
 
+### Implementation details
+
+Read more [details about error hash computation](stack-hash.md).
 
 
 <a name="demo"/>
