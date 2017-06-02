@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.orange.common</groupId>
     <artifactId>orange-mathoms-logging</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>Orange Software Experts Utils 4 Java</name>
 
     <properties>
@@ -93,7 +93,7 @@
         <url>https://github.com/Orange-OpenSource/orange-mathoms-logging.git</url>
         <connection>scm:git:https://github.com/Orange-OpenSource/orange-mathoms-logging.git</connection>
         <developerConnection>scm:git:https://github.com/Orange-OpenSource/orange-mathoms-logging.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>orange-mathoms-logging-1.0.1</tag>
     </scm>
 
     <distributionManagement>
