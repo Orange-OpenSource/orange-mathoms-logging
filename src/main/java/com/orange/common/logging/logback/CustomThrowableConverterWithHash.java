@@ -183,7 +183,6 @@ public class CustomThrowableConverterWithHash extends ThrowableHandlingConverter
         if (options == null) {
             return;
         }
-        System.out.println("options: "+options);
         for (String option : options) {
             @SuppressWarnings("rawtypes")
             Map evaluatorMap = (Map) getContext().getObject(CoreConstants.EVALUATOR_MAP);

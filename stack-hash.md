@@ -1,32 +1,30 @@
-# Details about Error Hash
+# Details about stack hash
 
-This page gives details about the Error Hash feature (goal and implementation).
+This page gives details about the **stack hash** feature (goal and implementation).
 
----
 
-## Why generating errors hash?
+## Why generating stack hashes?
 
 Actually the `stack_hash` is meant to identify an error (throwable) with a **short** and **stable** signature, that 
-will help matching several distinct occurrences of the same kind of error:
+will help matching several distinct occurrences of the same type of error:
 
-* **short** for easing Elasticsearch indexing, and take advantage of it (that's why we use a hex encoded hash),
-* **stable** is the tricky part, as the same kind of error occurring twice may not generate exactly the same stack trace (see below).
+* **short** for easing elasticsearch indexing, and take advantage of it (that's why we use a hex encoded hash),
+* **stable** is the tricky part, as the same type of error occurring twice may not generate exactly the same stack trace (see below).
 
-This done, it becomes easy with Elasticsearch or any other logs centralization and indexation system to:
+This done, it becomes easy with elasticsearch or any other logs centralization and indexation system to:
 
-* **count** distinct kind of errors that occur in your code over time,
-* **count** occurrences and frequency of a given kind of error,
-* **detect** when a (new) kind of error occurred for the first time (maybe linking this to a new version being deployed?).
+* **count** distinct type of errors that occur in your code over time,
+* **count** occurrences and frequency of a given type of error,
+* **detect** when a (new) type of error occurred for the first time (maybe linking this to a new version being deployed?).
 
-In some cases, the error hash may almost become a bug ID that you can link your bug tracker with...
+The stack hash may also become a simple error id that you can link your bug tracker with...
 
----
 
-## Example
+## Stack hash stability challenge by examples
 
 ### Let's consider error stack 1
 
-Note: the stack trace presented here has been cut by half from useless lines
+*(the stack trace presented here has been cut by half from useless lines)*
 
 <pre>
 <b>com.xyz.MyApp$MyClient$MyClientException</b>: <strike>An error occurred while getting Alice's things</strike><sup>(msg)</sup>
@@ -117,11 +115,10 @@ Caused by: <b>java.net.SocketTimeoutException</b>: <strike>Read timed out</strik
 
 Only **bolded elements** are supposed to be stable.
 
----
 
 ### Now let's consider error stack 2
 
-(shortened)
+*(shortened)*
 
 <pre>
 <b>com.xyz.MyApp$MyClient$MyClientException</b>: <strike>An error occurred while getting <b>Bob</b>'s things</strike><sup>(msg)</sup>
@@ -159,7 +156,7 @@ Caused by: <b>java.net.SocketTimeoutException</b>: <strike>Read timed out</strik
   ... 24 common frames omitted
 </pre>
 
-
+---
 
 You may see in this example that most of the <strike>strike elements have slight <b>differences</b></strike> from error stack
 1 (messages and generated classes names).
@@ -169,7 +166,7 @@ here is to be able to count them as *two occurrences of the same error*.
 
 ### Now let's consider error stack 3
 
-(shortened)
+*(shortened)*
 
 <pre>
 <b>com.xyz.MyApp$MyClient$MyClientException</b>: <strike>An error occurred while getting Alice's things</strike><sup>(msg)</sup>
@@ -194,24 +191,51 @@ Caused by: <b>javax.net.ssl.SSLException</b>: <strike>Connection has been shutdo
   ... 24 common frames omitted
 </pre>
 
+---
+
 Here, you can see that the first and second errors are the same as in error stack 1, but the root cause is different (`SSLException` instead of `SocketTimeoutException`).
 
 So in that case we don't want the top error hash computed for error stack 3 to be the same as for error stack 1.
 
-As a conclusion, error hash computation applies the following rules:
+## Stack hash computation rules
 
-1. an error hash shall not compute against the error message
-2. an error hash shall compute against it's parent cause (recurses)
-3. in order to stabilize the error hash (over time and space), it's nice to be able to strip the stack trace from non-stable elements
+As a conclusion, stack hash computation applies the following rules:
 
----
+1. a stack hash shall **not compute with the error message**
+2. a stack hash shall **compute with it's parent cause** (recurses)
+3. in order to stabilize the stack hash (over time and space), it's recommended to **exclude non-stable elements**
+
+
+## Using stack hash in `orange-mathoms-logging` components
+
+### `StackHashJsonProvider`
+
+This provider computes the stack hash for any log event with a throwable, and adds it as a single JSON attribute (`stack_hash` by default).
+
+It also supports defining a list of exclusion patterns.
+
+### `CustomThrowableConverterWithHash`
+
+Setting the `inlineHash` property to `true` in the `com.orange.common.logging.logback.CustomThrowableConverterWithHash` component
+computes and inlines stack hashes into the stack trace.
+
+The exclusion patterns to shorten the stack trace are used to compute the stack hashes too.
+
+Note: if no exclusion pattern is specified and the `inlineHash` property is active, a minimal filter is used to filter out
+elements with no source info (null filename or linenumber < 0) to ignore generated classnames. The drawback is that it 
+will also exclude classes not compiled in debug mode (do not contain source info).
+
+Warning: if you compute stack hashes with both `StackHashJsonProvider` and `CustomThrowableConverterWithHash` components, 
+make sure to define the same exclusion patterns for both or - in some cases - you will not get same hashes. 
+Unfortunately there is no way of sharing the same configuration in Logback configuration.
+
 
 ## Recommended exclusion patterns
 
-In a Spring Framework context, the following exclusion patterns seem pretty good:
+In a spring framework context, the following exclusion patterns seem pretty good:
 
 ```xml
-  <throwableConverter class="com.orange.common.logging.logback.CustomThrowableConverterWithHash">
+  <provider class="com.orange.common.logging.logback.StackHashJsonProvider">
     <!-- generated class names -->
     <exclude>\$\$FastClassByCGLIB\$\$</exclude>
     <exclude>\$\$EnhancerBySpringCGLIB\$\$</exclude>
@@ -239,5 +263,5 @@ In a Spring Framework context, the following exclusion patterns seem pretty good
     <exclude>^org\.apache\.coyote\.</exclude>
     <exclude>^java\.util\.concurrent\.ThreadPoolExecutor\.runWorker</exclude>
     <exclude>^java\.lang\.Thread\.run$</exclude>
-  </throwableConverter>
+  </provider>
 ```
