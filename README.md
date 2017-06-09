@@ -345,10 +345,68 @@ Both are installed and configured in Logback configuration files:
     <remoteHost>${logstash_host}</remoteHost>
     <port>${logstash_port}</port>
     <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-      <!-- computes and adds a 'stack_hash' field on errors -->
-      <provider class="com.orange.common.logging.logback.StackHashJsonProvider"/>
-      <!-- enriches the stack trace with unique hash -->
-      <throwableConverter class="com.orange.common.logging.logback.CustomThrowableConverterWithHash" />
+        <!-- computes and adds a 'stack_hash' field on errors -->
+        <provider class="com.orange.common.logging.logback.StackHashJsonProvider">
+            <!-- generated class names -->
+            <exclude>\$\$FastClassByCGLIB\$\$</exclude>
+            <exclude>\$\$EnhancerBySpringCGLIB\$\$</exclude>
+            <exclude>^sun\.reflect\..*\.invoke</exclude>
+            <!-- JDK internals -->
+            <exclude>^com\.sun\.</exclude>
+            <exclude>^sun\.net\.</exclude>
+            <!-- dynamic invocation -->
+            <exclude>^net\.sf\.cglib\.proxy\.MethodProxy\.invoke</exclude>
+            <exclude>^org\.springframework\.cglib\.</exclude>
+            <exclude>^org\.springframework\.transaction\.</exclude>
+            <exclude>^org\.springframework\.validation\.</exclude>
+            <exclude>^org\.springframework\.app\.</exclude>
+            <exclude>^org\.springframework\.aop\.</exclude>
+            <exclude>^java\.lang\.reflect\.Method\.invoke</exclude>
+            <!-- Spring plumbing -->
+            <exclude>^org\.springframework\.ws\..*\.invoke</exclude>
+            <exclude>^org\.springframework\.ws\.transport\.</exclude>
+            <exclude>^org\.springframework\.ws\.soap\.saaj\.SaajSoapMessage\.</exclude>
+            <exclude>^org\.springframework\.ws\.client\.core\.WebServiceTemplate\.</exclude>
+            <exclude>^org\.springframework\.web\.filter\.</exclude>
+            <!-- Tomcat internals -->
+            <exclude>^org\.apache\.tomcat\.</exclude>
+            <exclude>^org\.apache\.catalina\.</exclude>
+            <exclude>^org\.apache\.coyote\.</exclude>
+            <exclude>^java\.util\.concurrent\.ThreadPoolExecutor\.runWorker</exclude>
+            <exclude>^java\.lang\.Thread\.run$</exclude>
+        </provider>
+        <!-- enriches the stack trace with unique hash -->
+        <throwableConverter class="com.orange.common.logging.logback.CustomThrowableConverterWithHash">
+            <!-- computes and inlines stack hash -->
+            <inlineHash>true</inlineHash>
+            <!-- generated class names -->
+            <exclude>\$\$FastClassByCGLIB\$\$</exclude>
+            <exclude>\$\$EnhancerBySpringCGLIB\$\$</exclude>
+            <exclude>^sun\.reflect\..*\.invoke</exclude>
+            <!-- JDK internals -->
+            <exclude>^com\.sun\.</exclude>
+            <exclude>^sun\.net\.</exclude>
+            <!-- dynamic invocation -->
+            <exclude>^net\.sf\.cglib\.proxy\.MethodProxy\.invoke</exclude>
+            <exclude>^org\.springframework\.cglib\.</exclude>
+            <exclude>^org\.springframework\.transaction\.</exclude>
+            <exclude>^org\.springframework\.validation\.</exclude>
+            <exclude>^org\.springframework\.app\.</exclude>
+            <exclude>^org\.springframework\.aop\.</exclude>
+            <exclude>^java\.lang\.reflect\.Method\.invoke</exclude>
+            <!-- Spring plumbing -->
+            <exclude>^org\.springframework\.ws\..*\.invoke</exclude>
+            <exclude>^org\.springframework\.ws\.transport\.</exclude>
+            <exclude>^org\.springframework\.ws\.soap\.saaj\.SaajSoapMessage\.</exclude>
+            <exclude>^org\.springframework\.ws\.client\.core\.WebServiceTemplate\.</exclude>
+            <exclude>^org\.springframework\.web\.filter\.</exclude>
+            <!-- Tomcat internals -->
+            <exclude>^org\.apache\.tomcat\.</exclude>
+            <exclude>^org\.apache\.catalina\.</exclude>
+            <exclude>^org\.apache\.coyote\.</exclude>
+            <exclude>^java\.util\.concurrent\.ThreadPoolExecutor\.runWorker</exclude>
+            <exclude>^java\.lang\.Thread\.run$</exclude>
+        </throwableConverter>
     </encoder>
   </appender>
   
