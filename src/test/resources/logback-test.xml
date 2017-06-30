@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+	<!-- stack trace element exclusion patterns -->
+	<property name="STE_EXCLUSIONS" value="\$\$FastClassByCGLIB\$\$,\$\$EnhancerBySpringCGLIB\$\$,^sun\.reflect\..*\.invoke,^com\.sun\.,^sun\.net\.,^net\.sf\.cglib\.proxy\.MethodProxy\.invoke,^org\.junit\.,^org\.apache\.maven\.surefire\.,^java\.lang\.reflect\.Method\.invoke,^java\.util\.concurrent\.ThreadPoolExecutor\.runWorker,^java\.lang\.Thread\.run,^com\.intellij\."/>
+
 	<!-- declare "%sEx" as a conversion rule usCustomThrowableConverterWithHashHash -->
-	<conversionRule conversionWord="hEx" converterClass="com.orange.common.logging.logback.CustomThrowableConverterWithHash">
+	<conversionRule conversionWord="hEx" converterClass="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
 	</conversionRule>
 
 	<appender name="STDOUT1" class="ch.qos.logback.core.ConsoleAppender">
@@ -16,7 +19,7 @@
 	<appender name="STDOUT2" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
 			<!-- use converters in the layout pattern -->
-			<Pattern>[EXCLUSIONS] %d{HH:mm:ss.SSS} %-5level %logger [%thread:%X{requestId:--}] - %msg%n%hEx{^sun\.reflect\..*\.invoke,^com\.sun\.,^sun\.net\.,^net\.sf\.cglib\.proxy\.MethodProxy\.invoke,^org\.junit\.,^org\.apache\.maven\.surefire\.,^java\.lang\.reflect\.Method\.invoke,^java\.util\.concurrent\.ThreadPoolExecutor\.runWorker,^java\.lang\.Thread\.run}</Pattern>
+			<Pattern>[EXCLUSIONS] %d{HH:mm:ss.SSS} %-5level %logger [%thread:%X{requestId:--}] - %msg%n%hEx{full,full,full,${STE_EXCLUSIONS}}</Pattern>
 		</layout>
 		<!-- rest of your config ... -->
 	</appender>
@@ -25,36 +28,13 @@
 	<appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder class="net.logstash.logback.encoder.LogstashEncoder" >
 			<!-- computes and adds a 'stack_hash' field on errors -->
-			<provider class="com.orange.common.logging.logback.StackHashJsonProvider"/>
+			<provider class="net.logstash.logback.composite.loggingevent.StackHashJsonProvider">
+				<exclusions>${STE_EXCLUSIONS}</exclusions>
+			</provider>
 			<!-- enriches the stack trace with unique hash -->
-			<throwableConverter class="com.orange.common.logging.logback.CustomThrowableConverterWithHash">
-				<!-- generated class names -->
-				<exclude>\$\$FastClassByCGLIB\$\$</exclude>
-				<exclude>\$\$EnhancerBySpringCGLIB\$\$</exclude>
-				<exclude>^sun\.reflect\..*\.invoke</exclude>
-				<!-- JDK internals -->
-				<exclude>^com\.sun\.</exclude>
-				<exclude>^sun\.net\.</exclude>
-				<!-- dynamic invocation -->
-				<exclude>^net\.sf\.cglib\.proxy\.MethodProxy\.invoke</exclude>
-				<exclude>^org\.springframework\.cglib\.</exclude>
-				<exclude>^org\.springframework\.transaction\.</exclude>
-				<exclude>^org\.springframework\.validation\.</exclude>
-				<exclude>^org\.springframework\.app\.</exclude>
-				<exclude>^org\.springframework\.aop\.</exclude>
-				<exclude>^java\.lang\.reflect\.Method\.invoke</exclude>
-				<!-- Spring plumbing -->
-				<exclude>^org\.springframework\.ws\..*\.invoke</exclude>
-				<exclude>^org\.springframework\.ws\.transport\.</exclude>
-				<exclude>^org\.springframework\.ws\.soap\.saaj\.SaajSoapMessage\.</exclude>
-				<exclude>^org\.springframework\.ws\.client\.core\.WebServiceTemplate\.</exclude>
-				<exclude>^org\.springframework\.web\.filter\.</exclude>
-				<!-- Tomcat internals -->
-				<exclude>^org\.apache\.tomcat\.</exclude>
-				<exclude>^org\.apache\.catalina\.</exclude>
-				<exclude>^org\.apache\.coyote\.</exclude>
-				<exclude>^java\.util\.concurrent\.ThreadPoolExecutor\.runWorker</exclude>
-				<exclude>^java\.lang\.Thread\.run$</exclude>
+			<throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+				<inlineHash>true</inlineHash>
+				<exclusions>${STE_EXCLUSIONS}</exclusions>
 			</throwableConverter>
 		</encoder>
 	</appender>
@@ -62,36 +42,13 @@
 	<!-- even simpler with any appender from logstash-logback-appender -->
 	<appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashSocketAppender">
 		<!-- computes and adds a 'stack_hash' field on errors -->
-		<provider class="com.orange.common.logging.logback.StackHashJsonProvider"/>
+		<provider class="net.logstash.logback.composite.loggingevent.StackHashJsonProvider">
+			<exclusions>${STE_EXCLUSIONS}</exclusions>
+		</provider>
 		<!-- enriches the stack trace with unique hash -->
-		<throwableConverter class="com.orange.common.logging.logback.CustomThrowableConverterWithHash">
-			<!-- generated class names -->
-			<exclude>\$\$FastClassByCGLIB\$\$</exclude>
-			<exclude>\$\$EnhancerBySpringCGLIB\$\$</exclude>
-			<exclude>^sun\.reflect\..*\.invoke</exclude>
-			<!-- JDK internals -->
-			<exclude>^com\.sun\.</exclude>
-			<exclude>^sun\.net\.</exclude>
-			<!-- dynamic invocation -->
-			<exclude>^net\.sf\.cglib\.proxy\.MethodProxy\.invoke</exclude>
-			<exclude>^org\.springframework\.cglib\.</exclude>
-			<exclude>^org\.springframework\.transaction\.</exclude>
-			<exclude>^org\.springframework\.validation\.</exclude>
-			<exclude>^org\.springframework\.app\.</exclude>
-			<exclude>^org\.springframework\.aop\.</exclude>
-			<exclude>^java\.lang\.reflect\.Method\.invoke</exclude>
-			<!-- Spring plumbing -->
-			<exclude>^org\.springframework\.ws\..*\.invoke</exclude>
-			<exclude>^org\.springframework\.ws\.transport\.</exclude>
-			<exclude>^org\.springframework\.ws\.soap\.saaj\.SaajSoapMessage\.</exclude>
-			<exclude>^org\.springframework\.ws\.client\.core\.WebServiceTemplate\.</exclude>
-			<exclude>^org\.springframework\.web\.filter\.</exclude>
-			<!-- Tomcat internals -->
-			<exclude>^org\.apache\.tomcat\.</exclude>
-			<exclude>^org\.apache\.catalina\.</exclude>
-			<exclude>^org\.apache\.coyote\.</exclude>
-			<exclude>^java\.util\.concurrent\.ThreadPoolExecutor\.runWorker</exclude>
-			<exclude>^java\.lang\.Thread\.run$</exclude>
+		<throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+			<inlineHash>true</inlineHash>
+			<exclusions>${STE_EXCLUSIONS}</exclusions>
 		</throwableConverter>
 		<!-- rest of your config ... -->
 	</appender>

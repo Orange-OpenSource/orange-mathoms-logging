@@ -308,7 +308,7 @@ The idea is to generate a short, unique ID that identifies your stack trace.
 Example:
 
 ```text
-#07e70d1e> com.xyz.MyApp$MyClient$MyClientException: An error occurred while getting the things
+<#07e70d1e> com.xyz.MyApp$MyClient$MyClientException: An error occurred while getting the things
     at com.xyz.MyApp$MyClient.getTheThings(MyApp.java:26)
     at com.xyz.MyApp.test_logging(MyApp.java:16)
     at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
@@ -318,20 +318,22 @@ Example:
     at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
     at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
     ...
-Caused by: #393b506a> com.xyz.MyApp$HttpStack$HttpError: I/O error on GET request for http://dummy/things
+Caused by: <#393b506a> com.xyz.MyApp$HttpStack$HttpError: I/O error on GET request for http://dummy/things
     at com.xyz.MyApp$HttpStack.get(MyApp.java:40)
     at com.xyz.MyApp$MyClient.getTheThings(MyApp.java:24)
     ... 23 common frames omitted
-Caused by: #d6db326f> java.net.SocketTimeoutException: Read timed out
+Caused by: <#d6db326f> java.net.SocketTimeoutException: Read timed out
     at com.xyz.MyApp$HttpStack.get(MyApp.java:38)
     ... 24 common frames omitted```
 ```
 
 ### How
 
-This is done thanks to the [CustomThrowableConverterWithHash](src/main/java/com/orange/common/logging/logback/CustomThrowableConverterWithHash.java) component .
+This feature is no longer part of the `orange-mathoms-logging` library, as it has been contributed to the [logstash-logback-encoder](https://github.com/logstash/logstash-logback-encoder) library (available from version `4.11`).
 
-Additionally, when pushing logs into JSON native format, you may also use the custom [StackHashJsonProvider](src/main/java/com/orange/common/logging/logback/StackHashJsonProvider.java)
+This is done thanks to the [ShortenedThrowableConverter](https://github.com/logstash/logstash-logback-encoder/blob/master/src/main/java/net/logstash/logback/stacktrace/ShortenedThrowableConverter.java) component .
+
+Additionally, when pushing logs into JSON native format, you may also use the custom [StackHashJsonProvider](https://github.com/logstash/logstash-logback-encoder/blob/master/src/main/java/net/logstash/logback/composite/loggingevent/StackHashJsonProvider.java)
 provider, that adds the stack trace signature (hash) as a separate field, for building advanced Kibana dashboards.
 
 Both are installed and configured in Logback configuration files:
@@ -340,72 +342,25 @@ Both are installed and configured in Logback configuration files:
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- application logging configuration to ship logs directly to Logstash -->
 <configuration>
+  <!-- define stack trace element exclusion patterns as a global property -->
+  <property name="STE_EXCLUSIONS" value="\$\$FastClassByCGLIB\$\$,\$\$EnhancerBySpringCGLIB\$\$,^sun\.reflect\..*\.invoke,^com\.sun\.,^sun\.net\.,^net\.sf\.cglib\.proxy\.MethodProxy\.invoke,^org\.junit\.,^org\.apache\.maven\.surefire\.,^java\.lang\.reflect\.Method\.invoke,^java\.util\.concurrent\.ThreadPoolExecutor\.runWorker,^java\.lang\.Thread\.run"/>
+  
   <appender name="TCP" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
     <!-- remote Logstash server -->
     <remoteHost>${logstash_host}</remoteHost>
     <port>${logstash_port}</port>
     <encoder class="net.logstash.logback.encoder.LogstashEncoder">
         <!-- computes and adds a 'stack_hash' field on errors -->
-        <provider class="com.orange.common.logging.logback.StackHashJsonProvider">
-            <!-- generated class names -->
-            <exclude>\$\$FastClassByCGLIB\$\$</exclude>
-            <exclude>\$\$EnhancerBySpringCGLIB\$\$</exclude>
-            <exclude>^sun\.reflect\..*\.invoke</exclude>
-            <!-- JDK internals -->
-            <exclude>^com\.sun\.</exclude>
-            <exclude>^sun\.net\.</exclude>
-            <!-- dynamic invocation -->
-            <exclude>^net\.sf\.cglib\.proxy\.MethodProxy\.invoke</exclude>
-            <exclude>^org\.springframework\.cglib\.</exclude>
-            <exclude>^org\.springframework\.transaction\.</exclude>
-            <exclude>^org\.springframework\.validation\.</exclude>
-            <exclude>^org\.springframework\.app\.</exclude>
-            <exclude>^org\.springframework\.aop\.</exclude>
-            <exclude>^java\.lang\.reflect\.Method\.invoke</exclude>
-            <!-- Spring plumbing -->
-            <exclude>^org\.springframework\.ws\..*\.invoke</exclude>
-            <exclude>^org\.springframework\.ws\.transport\.</exclude>
-            <exclude>^org\.springframework\.ws\.soap\.saaj\.SaajSoapMessage\.</exclude>
-            <exclude>^org\.springframework\.ws\.client\.core\.WebServiceTemplate\.</exclude>
-            <exclude>^org\.springframework\.web\.filter\.</exclude>
-            <!-- Tomcat internals -->
-            <exclude>^org\.apache\.tomcat\.</exclude>
-            <exclude>^org\.apache\.catalina\.</exclude>
-            <exclude>^org\.apache\.coyote\.</exclude>
-            <exclude>^java\.util\.concurrent\.ThreadPoolExecutor\.runWorker</exclude>
-            <exclude>^java\.lang\.Thread\.run$</exclude>
+        <provider class="net.logstash.logback.composite.loggingevent.StackHashJsonProvider">
+            <!-- use global property for exclusion patterns -->
+            <exclusions>${STE_EXCLUSIONS}</exclusions>
         </provider>
         <!-- enriches the stack trace with unique hash -->
-        <throwableConverter class="com.orange.common.logging.logback.CustomThrowableConverterWithHash">
-            <!-- computes and inlines stack hash -->
+        <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+            <!-- compute and inline hash in stack trace -->
             <inlineHash>true</inlineHash>
-            <!-- generated class names -->
-            <exclude>\$\$FastClassByCGLIB\$\$</exclude>
-            <exclude>\$\$EnhancerBySpringCGLIB\$\$</exclude>
-            <exclude>^sun\.reflect\..*\.invoke</exclude>
-            <!-- JDK internals -->
-            <exclude>^com\.sun\.</exclude>
-            <exclude>^sun\.net\.</exclude>
-            <!-- dynamic invocation -->
-            <exclude>^net\.sf\.cglib\.proxy\.MethodProxy\.invoke</exclude>
-            <exclude>^org\.springframework\.cglib\.</exclude>
-            <exclude>^org\.springframework\.transaction\.</exclude>
-            <exclude>^org\.springframework\.validation\.</exclude>
-            <exclude>^org\.springframework\.app\.</exclude>
-            <exclude>^org\.springframework\.aop\.</exclude>
-            <exclude>^java\.lang\.reflect\.Method\.invoke</exclude>
-            <!-- Spring plumbing -->
-            <exclude>^org\.springframework\.ws\..*\.invoke</exclude>
-            <exclude>^org\.springframework\.ws\.transport\.</exclude>
-            <exclude>^org\.springframework\.ws\.soap\.saaj\.SaajSoapMessage\.</exclude>
-            <exclude>^org\.springframework\.ws\.client\.core\.WebServiceTemplate\.</exclude>
-            <exclude>^org\.springframework\.web\.filter\.</exclude>
-            <!-- Tomcat internals -->
-            <exclude>^org\.apache\.tomcat\.</exclude>
-            <exclude>^org\.apache\.catalina\.</exclude>
-            <exclude>^org\.apache\.coyote\.</exclude>
-            <exclude>^java\.util\.concurrent\.ThreadPoolExecutor\.runWorker</exclude>
-            <exclude>^java\.lang\.Thread\.run$</exclude>
+            <!-- use global property for exclusion patterns -->
+            <exclusions>${STE_EXCLUSIONS}</exclusions>
         </throwableConverter>
     </encoder>
   </appender>
@@ -420,7 +375,7 @@ Both are installed and configured in Logback configuration files:
 
 ### Implementation details
 
-Read more [details about error hash computation](stack-hash.md).
+Read more [details about error hash computation](https://github.com/logstash/logstash-logback-encoder/blob/master/stack-hash.md).
 
 
 <a name="demo"/>
